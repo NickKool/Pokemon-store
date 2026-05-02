@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from 'react';
 
-export default class MainPage extends Component {
+export class MainPage extends Component {
   render(): ReactNode {
     return (
       <main className="w-full max-w-7xl mx-auto min-h-screen flex flex-col ">

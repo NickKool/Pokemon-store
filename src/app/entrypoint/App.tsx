@@ -3,7 +3,7 @@ import '@/app/styles/index.css';
 
 import { MainPage } from '@/pages/main/index';
 
-export default class App extends Component {
+export class App extends Component {
   render(): ReactNode {
     return (
       <div className=" flex flex-col items-center">
