@@ -1,5 +1,6 @@
 import { Component, type ChangeEvent } from 'react';
 import { Button, Input } from '@/shared/ui';
+import { getSavedSearchTerm, saveSearchTerm, isSameSearch } from '@/features/search-pokemon';
 
 interface State {
   searchTerm: string;
@@ -10,7 +11,7 @@ export class SearchBar extends Component<object, State> {
   constructor(props: object) {
     super(props);
 
-    const savedSearch = localStorage.getItem('pokemonSearchTerm') || '';
+    const savedSearch = getSavedSearchTerm();
 
     this.state = {
       searchTerm: savedSearch,
@@ -24,12 +25,10 @@ export class SearchBar extends Component<object, State> {
 
   onSearchClick = () => {
     const { searchTerm } = this.state;
-    const trimmedTerm = searchTerm.trim();
 
-    const lastSaved = localStorage.getItem('pokemonSearchTerm');
-    if (trimmedTerm === lastSaved) return;
+    if (isSameSearch(searchTerm)) return;
 
-    localStorage.setItem('pokemonSearchTerm', trimmedTerm);
+    saveSearchTerm(searchTerm);
   };
 
   render() {
