@@ -1,6 +1,9 @@
 import { Component, type ReactNode } from 'react';
 
 import { SearchBar } from '@/widgets/search-bar';
+import { PokemonList } from '@/widgets/pokemon-list';
+
+import { MOCK_POKEMONS } from './Moke-Pokemons';
 
 export class MainPage extends Component {
   render(): ReactNode {
@@ -11,7 +14,9 @@ export class MainPage extends Component {
           <div className="bg-search-bg w-full rounded-md p-3">
             <SearchBar />
           </div>
-          <div className="bg-search-bg text-sub-text w-full rounded-md p-3">ergergerg</div>
+          <div className="bg-search-bg  w-full rounded-md p-3">
+            <PokemonList pokemons={MOCK_POKEMONS} />
+          </div>
         </div>
       </main>
     );
