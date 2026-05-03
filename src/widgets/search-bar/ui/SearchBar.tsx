@@ -2,22 +2,19 @@ import { Component, type ChangeEvent } from 'react';
 import { Button, Input } from '@/shared/ui';
 import { getSavedSearchTerm, saveSearchTerm, isSameSearch } from '@/features/search-pokemon';
 
-interface State {
-  searchTerm: string;
+interface SearchBarProps {
+  onSearch: (term: string) => void;
   isLoading: boolean;
 }
 
-export class SearchBar extends Component<object, State> {
-  constructor(props: object) {
-    super(props);
+interface State {
+  searchTerm: string;
+}
 
-    const savedSearch = getSavedSearchTerm();
-
-    this.state = {
-      searchTerm: savedSearch,
-      isLoading: false,
-    };
-  }
+export class SearchBar extends Component<SearchBarProps, State> {
+  state: State = {
+    searchTerm: getSavedSearchTerm(),
+  };
 
   onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({ searchTerm: e.target.value });
@@ -25,14 +22,18 @@ export class SearchBar extends Component<object, State> {
 
   onSearchClick = () => {
     const { searchTerm } = this.state;
+    const trimmed = searchTerm.trim();
 
-    if (isSameSearch(searchTerm)) return;
+    if (isSameSearch(trimmed)) return;
 
-    saveSearchTerm(searchTerm);
+    saveSearchTerm(trimmed);
+
+    this.props.onSearch(trimmed);
   };
 
   render() {
-    const { searchTerm, isLoading } = this.state;
+    const { searchTerm } = this.state;
+    const { isLoading } = this.props;
 
     const isInputEmpty = !searchTerm.trim();
 

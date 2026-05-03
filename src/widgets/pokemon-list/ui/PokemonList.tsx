@@ -1,25 +1,31 @@
 import { Component } from 'react';
 import { PokemonCard } from '@/entities/pokemon';
-
-interface PokemonData {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-}
+import { Spinner } from '@/shared/ui';
+import type { PokemonData } from '@/features/search-pokemon';
 
 interface PokemonListProps {
   pokemons: PokemonData[];
+  isLoading: boolean;
+  error: string | null;
 }
 
 export class PokemonList extends Component<PokemonListProps> {
   render() {
-    const { pokemons } = this.props;
+    const { pokemons, isLoading, error } = this.props;
 
-    if (pokemons.length === 0) {
+    if (isLoading) {
       return (
-        <div className="text-sub-text text-center mt-10 italic">
-          No Pokemons found. Try searching for one!
+        <div className="flex justify-center items-center min-h-75">
+          <Spinner />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-red-500 text-center mt-10 p-6 border border-red-500/20 bg-red-500/5 rounded-xl">
+          <p className="font-bold text-lg mb-1">Loading error</p>
+          <p>{error}</p>
         </div>
       );
     }
