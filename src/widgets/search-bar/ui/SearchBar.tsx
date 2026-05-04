@@ -24,6 +24,8 @@ export class SearchBar extends Component<SearchBarProps, State> {
     const { searchTerm } = this.state;
     const trimmed = searchTerm.trim();
 
+    this.setState({ searchTerm: trimmed });
+
     if (isSameSearch(trimmed)) return;
 
     saveSearchTerm(trimmed);
