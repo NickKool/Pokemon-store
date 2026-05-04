@@ -3,6 +3,7 @@ import { SearchBar } from '@/widgets/search-bar';
 import { PokemonList } from '@/widgets/pokemon-list';
 import { searchService } from '@/features/search-pokemon';
 import type { PokemonData } from '@/features/search-pokemon';
+import { CrashButton } from '@/features/search-pokemon';
 
 interface State {
   pokemons: PokemonData[];
@@ -49,6 +50,7 @@ export class MainPage extends Component<object, State> {
           <div className="bg-search-bg w-full rounded-md p-3 relative min-h-75">
             <PokemonList pokemons={pokemons} isLoading={isLoading} error={error} />
           </div>
+          <CrashButton />
         </div>
       </main>
     );
