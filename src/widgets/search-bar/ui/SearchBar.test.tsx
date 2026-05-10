@@ -63,4 +63,12 @@ describe('SearchBar Component', () => {
     fireEvent.click(button);
     expect(localStorage.getItem('pokemonSearchTerm')).toBe('new-value');
   });
+  it('should not call onSearch if the search term is the same as the saved one', () => {
+    const term = 'pikachu';
+    localStorage.setItem('pokemonSearchTerm', term);
+    render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
+    const button = screen.getByRole('button', { name: /find/i });
+    fireEvent.click(button);
+    expect(mockOnSearch).not.toHaveBeenCalled();
+  });
 });
