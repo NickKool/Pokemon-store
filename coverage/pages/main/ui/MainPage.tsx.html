@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -135,33 +135,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -193,33 +193,33 @@ interface State {
 }
 &nbsp;
 export class MainPage extends Component&lt;object, State&gt; {
-  state: State = <span class="cstat-no" title="statement not covered" >{</span>
+  state: State = {
     pokemons: [],
     isLoading: false,
     error: null,
   };
 &nbsp;
-  async <span class="fstat-no" title="function not covered" >componentDidMount() {</span>
-<span class="cstat-no" title="statement not covered" >    this.runSearch();</span>
+  async componentDidMount() {
+    this.runSearch();
   }
 &nbsp;
-  runSearch = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async (t</span>erm?: string) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    this.setState({ isLoading: true, error: null });</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const data: PokemonData[] = <span class="cstat-no" title="statement not covered" >await searchService.execute(term);</span>
-<span class="cstat-no" title="statement not covered" >      this.setState({ pokemons: data });</span>
+  runSearch = async (term?: string) =&gt; {
+    this.setState({ isLoading: true, error: null });
+    try {
+      const data: PokemonData[] = await searchService.execute(term);
+      this.setState({ pokemons: data });
     } catch (err) {
-      const msg = <span class="cstat-no" title="statement not covered" >err instanceof Error ? err.message : 'Unknown error';</span>
-<span class="cstat-no" title="statement not covered" >      this.setState({ error: msg, pokemons: [] });</span>
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      this.setState({ error: msg, pokemons: [] });
     } finally {
-<span class="cstat-no" title="statement not covered" >      this.setState({ isLoading: false });</span>
+      this.setState({ isLoading: false });
     }
   };
 &nbsp;
-<span class="fstat-no" title="function not covered" >  render(): ReactNode {</span>
-    const { pokemons, isLoading, error } = <span class="cstat-no" title="statement not covered" >this.state;</span>
+  render(): ReactNode {
+    const { pokemons, isLoading, error } = this.state;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return (</span>
+    return (
       &lt;main className="w-full max-w-7xl mx-auto min-h-screen flex flex-col"&gt;
         &lt;div className="p-8 flex flex-col items-center gap-6"&gt;
           &lt;img src="logo.png" alt="Logo" className="w-48 h-auto object-contain" /&gt;
@@ -244,7 +244,7 @@ export class MainPage extends Component&lt;object, State&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-10T20:56:49.779Z
+                at 2026-05-10T21:16:06.047Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
