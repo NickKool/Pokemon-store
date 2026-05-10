@@ -45,7 +45,6 @@ export class SearchBar extends Component<SearchBarProps, State> {
           onChange={this.onInputChange}
           placeholder="Pokemon name..."
           className="grow"
-          disabled={isLoading}
         />
         <Button onClick={this.onSearchClick} className="whitespace-nowrap" isLoading={isLoading}>
           Find
