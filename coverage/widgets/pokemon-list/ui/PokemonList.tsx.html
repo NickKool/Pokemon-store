@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -122,29 +122,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -167,19 +167,19 @@ interface PokemonListProps {
 }
 &nbsp;
 export class PokemonList extends Component&lt;PokemonListProps&gt; {
-<span class="fstat-no" title="function not covered" >  render() {</span>
-    const { pokemons, isLoading, error } = <span class="cstat-no" title="statement not covered" >this.props;</span>
+  render() {
+    const { pokemons, isLoading, error } = this.props;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (isLoading) {</span>
-<span class="cstat-no" title="statement not covered" >      return (</span>
+    if (isLoading) {
+      return (
         &lt;div className="flex justify-center items-center min-h-75"&gt;
           &lt;Spinner /&gt;
         &lt;/div&gt;
       );
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (error) {</span>
-<span class="cstat-no" title="statement not covered" >      return (</span>
+    if (error) {
+      return (
         &lt;div className="text-red-500 text-center mt-10 p-6 border border-red-500/20 bg-red-500/5 rounded-xl"&gt;
           &lt;p className="font-bold text-lg mb-1"&gt;Loading error&lt;/p&gt;
           &lt;p&gt;{error}&lt;/p&gt;
@@ -187,10 +187,10 @@ export class PokemonList extends Component&lt;PokemonListProps&gt; {
       );
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return (</span>
+    return (
       &lt;div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"&gt;
-        {pokemons.<span class="fstat-no" title="function not covered" >map((p</span>okemon) =&gt; (
-<span class="cstat-no" title="statement not covered" >          &lt;PokemonCard</span>
+        {pokemons.map((pokemon) =&gt; (
+          &lt;PokemonCard
             key={pokemon.id}
             name={pokemon.name}
             description={pokemon.description}
@@ -208,7 +208,7 @@ export class PokemonList extends Component&lt;PokemonListProps&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-10T20:04:59.385Z
+                at 2026-05-10T20:41:43.068Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
