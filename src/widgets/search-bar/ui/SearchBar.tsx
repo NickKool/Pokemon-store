@@ -37,8 +37,6 @@ export class SearchBar extends Component<SearchBarProps, State> {
     const { searchTerm } = this.state;
     const { isLoading } = this.props;
 
-    const isInputEmpty = !searchTerm.trim();
-
     return (
       <div className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl mx-auto">
         <Input
@@ -49,12 +47,7 @@ export class SearchBar extends Component<SearchBarProps, State> {
           className="grow"
           disabled={isLoading}
         />
-        <Button
-          onClick={this.onSearchClick}
-          className="whitespace-nowrap"
-          disabled={isInputEmpty}
-          isLoading={isLoading}
-        >
+        <Button onClick={this.onSearchClick} className="whitespace-nowrap" isLoading={isLoading}>
           Find
         </Button>
       </div>

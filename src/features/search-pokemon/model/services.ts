@@ -9,9 +9,11 @@ export const getSavedSearchTerm = (): string => {
 
 export const saveSearchTerm = (term: string): void => {
   const trimmed = term.trim();
-  if (!trimmed) return;
-
-  localStorage.setItem(STORAGE_KEY, trimmed);
+  if (!trimmed) {
+    localStorage.removeItem(STORAGE_KEY);
+  } else {
+    localStorage.setItem(STORAGE_KEY, trimmed);
+  }
 };
 
 export const isSameSearch = (newTerm: string): boolean => {

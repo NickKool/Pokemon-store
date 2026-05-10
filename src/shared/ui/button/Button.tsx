@@ -7,12 +7,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export class Button extends Component<ButtonProps> {
   render() {
-    const { children, isLoading, disabled, className, ...props } = this.props;
+    const { children, isLoading, className, ...props } = this.props;
 
     return (
       <button
         {...props}
-        disabled={isLoading || disabled}
+        disabled={isLoading}
         className={`
           px-6 py-2 rounded-lg font-bold transition-all flex items-center justify-center
 
