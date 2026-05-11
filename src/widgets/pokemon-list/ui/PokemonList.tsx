@@ -3,7 +3,7 @@ import { PokemonCard } from '@/entities/pokemon';
 import { Spinner } from '@/shared/ui';
 import type { PokemonData } from '@/features/search-pokemon';
 
-interface PokemonListProps {
+export interface PokemonListProps {
   pokemons: PokemonData[];
   isLoading: boolean;
   error: string | null;
