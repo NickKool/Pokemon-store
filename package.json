@@ -13,7 +13,7 @@
     "prepare": "husky",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "test": "vitest",
+    "test:run": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
