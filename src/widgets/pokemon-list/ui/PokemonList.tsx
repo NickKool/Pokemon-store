@@ -35,6 +35,7 @@ export class PokemonList extends Component<PokemonListProps> {
         {pokemons.map((pokemon) => (
           <PokemonCard
             key={pokemon.id}
+            id={pokemon.id}
             name={pokemon.name}
             description={pokemon.description}
             imageUrl={pokemon.image}
