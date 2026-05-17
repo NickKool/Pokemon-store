@@ -1,12 +1,8 @@
-import { Component } from 'react';
-
-export class Spinner extends Component {
-  render() {
-    return (
-      <div
-        data-testid="spinner"
-        className="w-20 h-20 border-2 border-input-focus border-t-transparent rounded-full animate-spin"
-      />
-    );
-  }
+export function Spinner() {
+  return (
+    <div
+      data-testid="spinner"
+      className="w-20 h-20 border-2 border-input-focus border-t-transparent rounded-full animate-spin"
+    />
+  );
 }
