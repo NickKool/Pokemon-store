@@ -1,22 +1,12 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Button } from '@/shared/ui';
 
-interface State {
-  shouldCrash: boolean;
-}
+export function CrashButton() {
+  const [shouldCrash, setShouldCrash] = useState(false);
 
-export class CrashButton extends Component<object, State> {
-  state = { shouldCrash: false };
-
-  handleCrash = () => {
-    this.setState({ shouldCrash: true });
-  };
-
-  render() {
-    if (this.state.shouldCrash) {
-      throw new Error('Error Boundary works (test)');
-    }
-
-    return <Button onClick={this.handleCrash}>Error Boundary</Button>;
+  if (shouldCrash) {
+    throw new Error('Error Boundary works (test)');
   }
+
+  return <Button onClick={() => setShouldCrash(true)}>Error Boundary</Button>;
 }
