@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { SearchBar } from './SearchBar';
 
 const mockOnSearch = vi.fn();
@@ -28,47 +29,59 @@ describe('SearchBar Component', () => {
     expect(input.value).toBe('');
   });
 
-  it('should updates input value when user types text', () => {
+  it('should updates input value when user types text', async () => {
+    const user = userEvent.setup();
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const input = screen.getByPlaceholderText(/pokemon name.../i) as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'charizard' } });
+
+    await user.type(input, 'charizard');
     expect(input.value).toBe('charizard');
   });
 
-  it('should trims spaces and saves search term to localStorage when search button is clicked', () => {
+  it('should trims spaces and saves search term to localStorage when search button is clicked', async () => {
+    const user = userEvent.setup();
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const input = screen.getByPlaceholderText(/pokemon name.../i);
     const button = screen.getByRole('button', { name: /find/i });
-    fireEvent.change(input, { target: { value: '  pikachu  ' } });
-    fireEvent.click(button);
+
+    await user.type(input, '  pikachu  ');
+    await user.click(button);
     expect(localStorage.getItem('pokemonSearchTerm')).toBe('pikachu');
   });
 
-  it('should calls onSearch callback with correct parameters', () => {
+  it('should calls onSearch callback with correct parameters', async () => {
+    const user = userEvent.setup();
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const input = screen.getByPlaceholderText(/pokemon name.../i);
     const button = screen.getByRole('button', { name: /find/i });
-    fireEvent.change(input, { target: { value: 'pikachu' } });
-    fireEvent.click(button);
+
+    await user.type(input, 'pikachu');
+    await user.click(button);
     expect(mockOnSearch).toHaveBeenCalledWith('pikachu');
     expect(mockOnSearch).toHaveBeenCalledTimes(1);
   });
 
-  it('should overwrites existing localStorage value during a new search', () => {
+  it('should overwrites existing localStorage value during a new search', async () => {
+    const user = userEvent.setup();
     localStorage.setItem('pokemonSearchTerm', 'old-value');
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const input = screen.getByPlaceholderText(/pokemon name.../i);
     const button = screen.getByRole('button', { name: /find/i });
-    fireEvent.change(input, { target: { value: 'new-value' } });
-    fireEvent.click(button);
+
+    await user.clear(input);
+    await user.type(input, 'new-value');
+    await user.click(button);
     expect(localStorage.getItem('pokemonSearchTerm')).toBe('new-value');
   });
-  it('should not call onSearch if the search term is the same as the saved one', () => {
+
+  it('should not call onSearch if the search term is the same as the saved one', async () => {
+    const user = userEvent.setup();
     const term = 'pikachu';
     localStorage.setItem('pokemonSearchTerm', term);
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const button = screen.getByRole('button', { name: /find/i });
-    fireEvent.click(button);
+
+    await user.click(button);
     expect(mockOnSearch).not.toHaveBeenCalled();
   });
 });

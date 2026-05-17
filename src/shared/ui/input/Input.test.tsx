@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Input } from './Input';
 
 describe('Input component', () => {
@@ -8,12 +9,13 @@ describe('Input component', () => {
     expect(inputElement).toBeInTheDocument();
   });
 
-  it('should call onChange when user types text', () => {
+  it('should call onChange when user types text', async () => {
+    const user = userEvent.setup();
     const handleChange = vi.fn();
     render(<Input onChange={handleChange} />);
     const inputElement = screen.getByRole('textbox');
-    fireEvent.change(inputElement, { target: { value: 'pikachu' } });
-    expect(handleChange).toHaveBeenCalledTimes(1);
+    await user.type(inputElement, 'pikachu');
+    expect(handleChange).toHaveBeenCalledTimes(7);
   });
 
   it('should render input value', () => {
