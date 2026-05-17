@@ -21,6 +21,9 @@
 }
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-app-bg text-main-text font-sans;
   }

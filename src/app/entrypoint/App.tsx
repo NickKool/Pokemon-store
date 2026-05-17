@@ -1,15 +1,12 @@
-import { Component, type ReactNode } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { appRouter } from '../providers/router/appRouter';
+import { ErrorBoundary } from '../providers/ErrorBoundary/ErrorBoundary';
 import '@/app/styles/index.css';
 
-import { ErrorBoundary } from '../providers/ErrorBoundary/ErrorBoundary';
-import { MainPage } from '@/pages/main/index';
-
-export class App extends Component {
-  render(): ReactNode {
-    return (
-      <ErrorBoundary>
-        <MainPage />
-      </ErrorBoundary>
-    );
-  }
+export function App() {
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={appRouter} />
+    </ErrorBoundary>
+  );
 }
