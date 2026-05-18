@@ -3,6 +3,7 @@ import { Layout } from '@/widgets/layout';
 import { MainPage } from '@/pages/main';
 import { AboutPage } from '@/pages/about';
 import { NotFoundPage } from '@/pages/not-found';
+import { PokemonDetail } from '@/widgets/pokemon-detail';
 
 export const appRouter = createBrowserRouter(
   [
@@ -17,7 +18,7 @@ export const appRouter = createBrowserRouter(
           children: [
             {
               path: 'pokemon/:id',
-              element: <div className="text-white p-4">Pokemon Panel</div>,
+              element: <PokemonDetail />,
             },
           ],
         },
@@ -33,6 +34,6 @@ export const appRouter = createBrowserRouter(
     },
   ],
   {
-    basename: '/React-2026-Q2',
+    basename: '/React-2026-Q2/',
   }
 );

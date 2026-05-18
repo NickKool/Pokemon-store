@@ -5,7 +5,7 @@ export function Layout() {
     <>
       <header className="w-full max-w-7xl mx-auto px-8 py-4 flex justify-between items-center border-b border-gray-700">
         <NavLink to="/" className="hover:opacity-80 transition-opacity duration-200">
-          <img src="logo.png" alt="Logo" className="w-32 h-auto object-contain" />
+          <img src="/React-2026-Q2/logo.png" alt="Logo" className="w-32 h-auto object-contain" />
         </NavLink>
         <nav className="flex gap-6">
           <NavLink

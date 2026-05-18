@@ -1,54 +1,170 @@
-import { Component, type ReactNode } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { SearchBar } from '@/widgets/search-bar';
 import { PokemonList } from '@/widgets/pokemon-list';
 import { searchService } from '@/features/search-pokemon';
 import type { PokemonData } from '@/features/search-pokemon';
+import { Pagination } from '@/shared/ui/pagination';
 
-interface State {
-  pokemons: PokemonData[];
-  isLoading: boolean;
-  error: string | null;
-}
+const ITEMS_PER_PAGE = 20;
 
-export class MainPage extends Component<object, State> {
-  state: State = {
-    pokemons: [],
-    isLoading: false,
-    error: null,
-  };
+export function MainPage() {
+  const [pokemons, setPokemons] = useState<PokemonData[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  async componentDidMount() {
-    this.runSearch();
-  }
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const params = useParams();
 
-  runSearch = async (term?: string) => {
-    this.setState({ isLoading: true, error: null });
-    try {
-      const data: PokemonData[] = await searchService.execute(term);
-      this.setState({ pokemons: data });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      this.setState({ error: msg, pokemons: [] });
-    } finally {
-      this.setState({ isLoading: false });
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const isDetailOpen = !!params.id || !!searchParams.get('details');
+  const currentSearchTerm = searchParams.get('q') || '';
+
+  const savedTermInStorage = localStorage.getItem('pokemonSearchTerm') || '';
+
+  useEffect(() => {
+    if (params.id) {
+      const currentParams = Object.fromEntries(searchParams.entries());
+
+      navigate(
+        {
+          pathname: '.',
+          search: new URLSearchParams(currentParams).toString(),
+        },
+        { replace: true }
+      );
     }
+  }, []);
+
+  useEffect(() => {
+    const urlQuery = searchParams.get('q');
+
+    if (urlQuery === null && savedTermInStorage.trim() !== '') {
+      const timer = setTimeout(() => {
+        const currentParams = Object.fromEntries(searchParams.entries());
+        setSearchParams({
+          ...currentParams,
+          q: savedTermInStorage,
+          page: '1',
+        });
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, setSearchParams, savedTermInStorage]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const result = await searchService.execute(currentSearchTerm, currentPage, ITEMS_PER_PAGE);
+
+        if (isMounted) {
+          setPokemons(result.pokemons);
+          setTotalCount(result.totalCount);
+        }
+      } catch (err) {
+        if (isMounted) {
+          const msg = err instanceof Error ? err.message : 'Unknown error';
+          setError(msg);
+          setPokemons([]);
+          setTotalCount(0);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentSearchTerm, currentPage]);
+
+  const handleSearch = (term: string) => {
+    setSearchParams({
+      q: term,
+      page: '1',
+    });
   };
 
-  render(): ReactNode {
-    const { pokemons, isLoading, error } = this.state;
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-    return (
-      <main className="w-full max-w-7xl mx-auto min-h-screen flex flex-col">
-        <div className="p-8 flex flex-col items-center gap-6">
-          <div className="bg-search-bg w-full rounded-md p-3">
-            <SearchBar onSearch={this.runSearch} isLoading={isLoading} />
-          </div>
+  const handlePageChange = (newPage: number) => {
+    const currentQuery = searchParams.get('q');
 
-          <div className="bg-search-bg w-full rounded-md p-3 relative min-h-75">
+    const newParams: Record<string, string> = {
+      page: String(newPage),
+    };
+
+    if (currentQuery) {
+      newParams.q = currentQuery;
+    }
+
+    setSearchParams(newParams);
+
+    navigate({
+      pathname: '.',
+      search: new URLSearchParams(newParams).toString(),
+    });
+  };
+
+  const handleCloseDetail = () => {
+    const currentParams = Object.fromEntries(searchParams.entries());
+    delete currentParams.details;
+
+    navigate({
+      pathname: '.',
+      search: new URLSearchParams(currentParams).toString(),
+    });
+  };
+
+  return (
+    <main className="w-full max-w-7xl mx-auto min-h-screen flex flex-col p-4 sm:p-8">
+      <div className="bg-search-bg w-full rounded-md p-3 mb-6">
+        <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6 items-start grow relative">
+        <div
+          className={`transition-all duration-300 w-full ${isDetailOpen ? 'lg:w-1/2' : 'lg:w-full'}`}
+        >
+          <div className="bg-search-bg w-full rounded-md p-3 min-h-75">
             <PokemonList pokemons={pokemons} isLoading={isLoading} error={error} />
+
+            {!isLoading && !error && pokemons.length > 0 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
         </div>
-      </main>
-    );
-  }
+
+        {isDetailOpen && (
+          <div className="w-full lg:w-1/2 bg-slate-800 border border-slate-700 rounded-md p-4 relative min-h-75 shadow-xl">
+            <button
+              onClick={handleCloseDetail}
+              className="absolute top-3 right-3 text-sub-text hover:text-main-text text-xl font-bold bg-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            >
+              ×
+            </button>
+            <Outlet context={{ handleCloseDetail }} />
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 self-center"></div>
+    </main>
+  );
 }

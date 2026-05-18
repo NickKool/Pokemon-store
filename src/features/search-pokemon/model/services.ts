@@ -1,23 +1,10 @@
 import { PokemonApi } from '@/entities/pokemon';
-import type { RawPokemon } from '@/entities/pokemon/api/PokemonApi';
+import type { RawPokemon, PokemonResponse } from '@/entities/pokemon/api/PokemonApi';
 
 const STORAGE_KEY = 'pokemonSearchTerm';
 
 export const getSavedSearchTerm = (): string => {
   return localStorage.getItem(STORAGE_KEY) || '';
-};
-
-export const saveSearchTerm = (term: string): void => {
-  const trimmed = term.trim();
-  if (!trimmed) {
-    localStorage.removeItem(STORAGE_KEY);
-  } else {
-    localStorage.setItem(STORAGE_KEY, trimmed);
-  }
-};
-
-export const isSameSearch = (newTerm: string): boolean => {
-  return newTerm.trim() === localStorage.getItem(STORAGE_KEY);
 };
 
 export interface PokemonData {
@@ -27,20 +14,25 @@ export interface PokemonData {
   image: string;
 }
 
+export interface SearchServiceResult {
+  pokemons: PokemonData[];
+  totalCount: number;
+}
+
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const searchService = {
-  async execute(term?: string): Promise<PokemonData[]> {
+  async execute(term?: string, page: number = 1, limit: number = 12): Promise<SearchServiceResult> {
     const query = term !== undefined ? term : getSavedSearchTerm();
     const trimmed = query.trim();
 
-    const rawData: RawPokemon[] = trimmed
+    const apiResponse: PokemonResponse = trimmed
       ? await PokemonApi.getByName(trimmed)
-      : await PokemonApi.getAll();
+      : await PokemonApi.getAll(page, limit);
 
     await sleep(2000);
 
-    return rawData.map(
+    const mappedPokemons = apiResponse.results.map(
       (item: RawPokemon): PokemonData => ({
         id: item.id,
         name: item.name,
@@ -48,5 +40,10 @@ export const searchService = {
         image: item.sprites.other['official-artwork'].front_default || item.sprites.front_default,
       })
     );
+
+    return {
+      pokemons: mappedPokemons,
+      totalCount: apiResponse.totalCount,
+    };
   },
 };
