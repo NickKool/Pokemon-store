@@ -1,55 +1,41 @@
-import { Component, type ChangeEvent } from 'react';
+import React, { useState, type ChangeEvent } from 'react';
 import { Button, Input } from '@/shared/ui';
-import { getSavedSearchTerm, saveSearchTerm, isSameSearch } from '@/features/search-pokemon';
+import { useLocalStorage } from '@/shared/lib';
 
 interface SearchBarProps {
   onSearch: (term: string) => void;
   isLoading: boolean;
 }
 
-interface State {
-  searchTerm: string;
-}
+export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
+  const [savedSearch, setSavedSearch] = useLocalStorage('pokemonSearchTerm', '');
 
-export class SearchBar extends Component<SearchBarProps, State> {
-  state: State = {
-    searchTerm: getSavedSearchTerm(),
+  const [searchTerm, setSearchTerm] = useState(savedSearch);
+
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
-  onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchTerm: e.target.value });
-  };
-
-  onSearchClick = () => {
-    const { searchTerm } = this.state;
+  const onSearchClick = () => {
     const trimmed = searchTerm.trim();
 
-    this.setState({ searchTerm: trimmed });
-
-    if (isSameSearch(trimmed)) return;
-
-    saveSearchTerm(trimmed);
-
-    this.props.onSearch(trimmed);
+    setSearchTerm(trimmed);
+    setSavedSearch(trimmed);
+    onSearch(trimmed);
   };
 
-  render() {
-    const { searchTerm } = this.state;
-    const { isLoading } = this.props;
-
-    return (
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl mx-auto">
-        <Input
-          type="text"
-          value={searchTerm}
-          onChange={this.onInputChange}
-          placeholder="Pokemon name..."
-          className="grow"
-        />
-        <Button onClick={this.onSearchClick} className="whitespace-nowrap" isLoading={isLoading}>
-          Find
-        </Button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl mx-auto">
+      <Input
+        type="text"
+        value={searchTerm}
+        onChange={onInputChange}
+        placeholder="Pokemon name..."
+        className="grow"
+      />
+      <Button onClick={onSearchClick} className="whitespace-nowrap" isLoading={isLoading}>
+        Find
+      </Button>
+    </div>
+  );
+};

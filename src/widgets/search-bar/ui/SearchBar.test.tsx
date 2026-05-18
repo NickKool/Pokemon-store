@@ -63,25 +63,17 @@ describe('SearchBar Component', () => {
 
   it('should overwrites existing localStorage value during a new search', async () => {
     const user = userEvent.setup();
-    localStorage.setItem('pokemonSearchTerm', 'old-value');
     render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
     const input = screen.getByPlaceholderText(/pokemon name.../i);
     const button = screen.getByRole('button', { name: /find/i });
+
+    await user.type(input, 'old-value');
+    await user.click(button);
+    expect(localStorage.getItem('pokemonSearchTerm')).toBe('old-value');
 
     await user.clear(input);
     await user.type(input, 'new-value');
     await user.click(button);
     expect(localStorage.getItem('pokemonSearchTerm')).toBe('new-value');
-  });
-
-  it('should not call onSearch if the search term is the same as the saved one', async () => {
-    const user = userEvent.setup();
-    const term = 'pikachu';
-    localStorage.setItem('pokemonSearchTerm', term);
-    render(<SearchBar onSearch={mockOnSearch} isLoading={false} />);
-    const button = screen.getByRole('button', { name: /find/i });
-
-    await user.click(button);
-    expect(mockOnSearch).not.toHaveBeenCalled();
   });
 });

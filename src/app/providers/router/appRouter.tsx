@@ -4,30 +4,35 @@ import { MainPage } from '@/pages/main';
 import { AboutPage } from '@/pages/about';
 import { NotFoundPage } from '@/pages/not-found';
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Layout />,
+      errorElement: <NotFoundPage />,
+      children: [
+        {
+          path: '',
+          element: <MainPage />,
+          children: [
+            {
+              path: 'pokemon/:id',
+              element: <div className="text-white p-4">Pokemon Panel</div>,
+            },
+          ],
+        },
+        {
+          path: 'about',
+          element: <AboutPage />,
+        },
+        {
+          path: '*',
+          element: <NotFoundPage />,
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <Layout />,
-    errorElement: <NotFoundPage />,
-    children: [
-      {
-        path: '',
-        element: <MainPage />,
-        children: [
-          {
-            path: 'pokemon/:id',
-            element: <div className="text-white p-4">Pokemon Panel</div>,
-          },
-        ],
-      },
-      {
-        path: 'about',
-        element: <AboutPage />,
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
-      },
-    ],
-  },
-]);
+    basename: '/React-2026-Q2',
+  }
+);
