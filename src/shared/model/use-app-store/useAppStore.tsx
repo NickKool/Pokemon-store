@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 interface AppState {
-  selectedIds: string[];
-  toggleSelectItem: (id: string) => void;
+  selectedIds: (string | number)[];
+  toggleSelectItem: (id: string | number) => void;
   clearSelection: () => void;
 }
 
