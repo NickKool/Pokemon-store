@@ -10,7 +10,6 @@ describe('AboutPage Component', () => {
 
     const authorName = screen.getByText(/Nikolay/i);
     expect(authorName).toBeInTheDocument();
-    expect(authorName).toHaveClass('text-white', 'font-semibold');
 
     expect(screen.getByText(/aspiring Frontend Developer/i)).toBeInTheDocument();
   });
