@@ -155,8 +155,13 @@ export function MainPage() {
           <div className="w-full lg:w-1/2 bg-search-bg border border-input-border rounded-md p-4 relative min-h-75 shadow-xl transition-colors duration-200">
             <button
               onClick={handleCloseDetail}
-              className="absolute top-3 right-3 text-sub-text hover:text-main-text text-xl font-bold bg-input-bg border border-input-border w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer"
-            ></button>
+              className="group absolute top-3 right-3 bg-input-bg border border-input-border w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <div className="relative w-3 h-3">
+                <span className="absolute inset-0 m-auto h-0.5 w-full bg-sub-text group-hover:bg-main-text rotate-45 transition-colors" />
+                <span className="absolute inset-0 m-auto h-0.5 w-full bg-sub-text group-hover:bg-main-text -rotate-45 transition-colors" />
+              </div>
+            </button>
             <Outlet context={{ handleCloseDetail }} />
           </div>
         )}
