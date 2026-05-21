@@ -88,13 +88,12 @@ export function PokemonDetail() {
       </div>
     );
   }
-
   if (error || !pokemon) {
     return <div className="text-red-500 p-4 text-center">{error || 'Loading error'}</div>;
   }
 
   return (
-    <div className="flex flex-col items-center p-4 text-white">
+    <div className="flex flex-col items-center p-4 text-main-text">
       <img src={pokemon.image} alt={pokemon.name} className="w-48 h-48 object-contain mb-4" />
       <h2 className="text-2xl font-bold capitalize mb-2">{pokemon.name}</h2>
       <p className="text-sub-text text-sm text-center">

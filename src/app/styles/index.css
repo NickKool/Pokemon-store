@@ -1,10 +1,11 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
 
   --color-app-bg: var(--color-slate-950);
-
   --color-main-text: var(--color-slate-50);
   --color-sub-text: var(--color-slate-400);
 
@@ -14,10 +15,31 @@
   --color-btn-hover: var(--color-red-500);
 
   --color-input-bg: var(--color-slate-950);
-  --color-input-border: var(--color-slate-800);
+  --color-input-border: var(--color-slate-700);
   --color-input-focus: var(--color-yellow-400);
   --color-input-text: var(--color-slate-200);
   --color-input-placeholder: var(--color-slate-500);
+}
+
+@layer theme {
+  :root {
+    &:not(.dark) {
+      --color-app-bg: var(--color-slate-50);
+      --color-main-text: var(--color-slate-900);
+      --color-sub-text: var(--color-slate-500);
+
+      --color-search-bg: var(--color-slate-200);
+
+      --color-btn-bg: var(--color-red-500);
+      --color-btn-hover: var(--color-red-600);
+
+      --color-input-bg: var(--color-white);
+      --color-input-border: var(--color-slate-300);
+      --color-input-focus: var(--color-red-500);
+      --color-input-text: var(--color-slate-900);
+      --color-input-placeholder: var(--color-slate-400);
+    }
+  }
 }
 
 @layer base {
@@ -25,6 +47,6 @@
     scrollbar-gutter: stable;
   }
   body {
-    @apply bg-app-bg text-main-text font-sans;
+    @apply bg-app-bg text-main-text font-sans transition-colors duration-200;
   }
 }

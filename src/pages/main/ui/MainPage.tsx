@@ -152,13 +152,11 @@ export function MainPage() {
         </div>
 
         {isDetailOpen && (
-          <div className="w-full lg:w-1/2 bg-slate-800 border border-slate-700 rounded-md p-4 relative min-h-75 shadow-xl">
+          <div className="w-full lg:w-1/2 bg-search-bg border border-input-border rounded-md p-4 relative min-h-75 shadow-xl transition-colors duration-200">
             <button
               onClick={handleCloseDetail}
-              className="absolute top-3 right-3 text-sub-text hover:text-main-text text-xl font-bold bg-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer"
-            >
-              ×
-            </button>
+              className="absolute top-3 right-3 text-sub-text hover:text-main-text text-xl font-bold bg-input-bg border border-input-border w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer"
+            ></button>
             <Outlet context={{ handleCloseDetail }} />
           </div>
         )}
