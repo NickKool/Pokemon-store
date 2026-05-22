@@ -25,20 +25,6 @@ export function MainPage() {
   const savedTermInStorage = localStorage.getItem('pokemonSearchTerm') || '';
 
   useEffect(() => {
-    if (params.id) {
-      const currentParams = Object.fromEntries(searchParams.entries());
-
-      navigate(
-        {
-          pathname: '.',
-          search: new URLSearchParams(currentParams).toString(),
-        },
-        { replace: true }
-      );
-    }
-  }, []);
-
-  useEffect(() => {
     const urlQuery = searchParams.get('q');
 
     if (urlQuery === null && savedTermInStorage.trim() !== '') {
