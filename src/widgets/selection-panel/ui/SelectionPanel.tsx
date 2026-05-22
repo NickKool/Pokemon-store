@@ -1,14 +1,23 @@
 import { useAppStore } from '@/shared/model';
+import { downloadCsv } from '@/shared/lib';
 
 export function SelectionPanel() {
   const selectedIds = useAppStore((state) => state.selectedIds);
   const clearSelection = useAppStore((state) => state.clearSelection);
+  const pokemons = useAppStore((state) => state.pokemons);
 
   const selectedCount = selectedIds.length;
 
   if (selectedCount === 0) return null;
 
-  const handleDownload = () => {};
+  const handleDownload = () => {
+    const selectedPokemons = pokemons.filter((pokemon) => {
+      return selectedIds.some(
+        (selectedId) => String(selectedId).trim() === String(pokemon.id).trim()
+      );
+    });
+    downloadCsv(selectedPokemons);
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-search-bg border-t border-input-border p-4 transition-all duration-300">

@@ -5,6 +5,7 @@ import { PokemonList } from '@/widgets/pokemon-list';
 import { searchService } from '@/features/search-pokemon';
 import type { PokemonData } from '@/features/search-pokemon';
 import { Pagination } from '@/shared/ui/pagination';
+import { useAppStore } from '@/shared/model';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -13,6 +14,8 @@ export function MainPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const setGlobalPokemons = useAppStore((state) => state.setPokemons);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -54,6 +57,7 @@ export function MainPage() {
         if (isMounted) {
           setPokemons(result.pokemons);
           setTotalCount(result.totalCount);
+          setGlobalPokemons(result.pokemons);
         }
       } catch (err) {
         if (isMounted) {
@@ -61,6 +65,7 @@ export function MainPage() {
           setError(msg);
           setPokemons([]);
           setTotalCount(0);
+          setGlobalPokemons([]);
         }
       } finally {
         if (isMounted) {
@@ -74,7 +79,7 @@ export function MainPage() {
     return () => {
       isMounted = false;
     };
-  }, [currentSearchTerm, currentPage]);
+  }, [currentSearchTerm, currentPage, setGlobalPokemons]);
 
   const handleSearch = (term: string) => {
     setSearchParams({
