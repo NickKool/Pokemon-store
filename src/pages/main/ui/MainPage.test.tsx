@@ -4,6 +4,8 @@ import { MainPage } from './MainPage';
 import { searchService } from '@/features/search-pokemon';
 import { type PokemonListProps } from '@/widgets/pokemon-list/ui/PokemonList';
 import { type PokemonData } from '@/features/search-pokemon';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/shared/api/queryClient';
 
 vi.mock('@/features/search-pokemon', () => ({
   searchService: {
@@ -44,28 +46,43 @@ vi.mock('@/shared/ui/pagination', () => ({
   ),
 }));
 
-describe('MainPage', () => {
+describe('MainPage Component integration tests', () => {
   const mockPokemons = [
     { id: 1, name: 'Bulbasaur', description: 'Seed pokemon', image: 'url1' },
     { id: 2, name: 'Pikachu', description: 'Seed pokemon', image: 'url2' },
   ];
 
-  const renderWithRouter = (initialEntries = ['/']) => {
-    return render(
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route path="/" element={<MainPage />}>
-            <Route path="pokemon/:id" element={<div>Detail Panel</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    );
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+
+    queryClient.clear();
+
+    queryClient.setDefaultOptions({
+      queries: {
+        retry: false,
+        networkMode: 'always',
+        gcTime: 0,
+        staleTime: 0,
+      },
+    });
+
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
   });
+
+  const renderWithRouter = (initialEntries = ['/']) => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <Routes>
+            <Route path="/" element={<MainPage />}>
+              <Route path="pokemon/:id" element={<div>Detail Panel</div>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+  };
 
   it('should request data upon mounting and display it', async () => {
     vi.mocked(searchService.execute).mockResolvedValue({
@@ -95,7 +112,9 @@ describe('MainPage', () => {
   });
 
   it('should display "Unknown error" if a non-standard exception is thrown', async () => {
-    vi.mocked(searchService.execute).mockRejectedValue('Something went wrong');
+    vi.mocked(searchService.execute).mockImplementation(() => {
+      throw { customMessage: 'Raw string or object exception' };
+    });
 
     renderWithRouter();
 
@@ -119,6 +138,23 @@ describe('MainPage', () => {
     await waitFor(() => {
       expect(searchService.execute).toHaveBeenCalledWith('pikachu', 1, 20);
       expect(screen.getByText('Pikachu')).toBeInTheDocument();
+    });
+  });
+
+  it('should display offline message and hide list when browser is offline', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    vi.mocked(searchService.execute).mockResolvedValue({
+      pokemons: mockPokemons,
+      totalCount: 2,
+    });
+
+    renderWithRouter();
+
+    await waitFor(() => {
+      expect(screen.queryByText('Bulbasaur')).not.toBeInTheDocument();
+      expect(
+        screen.getByText('No internet connection. Cannot display or refresh data.')
+      ).toBeInTheDocument();
     });
   });
 });

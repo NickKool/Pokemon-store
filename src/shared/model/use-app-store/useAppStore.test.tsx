@@ -1,37 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from './useAppStore';
 
-interface PokemonData {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-}
-
-describe('useAppStore', () => {
-  const mockPokemons: PokemonData[] = [
-    { id: 25, name: 'Pikachu', description: 'Mouse Pokémon', image: 'pikachu.png' },
-    { id: 1, name: 'Bulbasaur', description: 'Seed Pokémon', image: 'bulbasaur.png' },
-  ];
-
+describe('useAppStore (Client-side UI Selection)', () => {
   beforeEach(() => {
     useAppStore.setState({
-      pokemons: [],
       selectedIds: [],
     });
   });
 
   it('should have correct initial state', () => {
     const state = useAppStore.getState();
-
-    expect(state.pokemons).toEqual([]);
     expect(state.selectedIds).toEqual([]);
-  });
-
-  it('should set pokemons list via setPokemons', () => {
-    useAppStore.getState().setPokemons(mockPokemons);
-    const updatedState = useAppStore.getState();
-    expect(updatedState.pokemons).toEqual(mockPokemons);
   });
 
   it('should add item ID to selectedIds if it is not present via toggleSelectItem', () => {
