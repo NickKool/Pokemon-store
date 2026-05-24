@@ -1,22 +1,47 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useAppStore } from '@/shared/model';
 import { downloadCsv } from '@/shared/lib';
+import type { PokemonData } from '@/features/search-pokemon';
+
+interface CachedPokemonResponse {
+  pokemons: PokemonData[];
+  totalCount: number;
+}
 
 export function SelectionPanel() {
   const selectedIds = useAppStore((state) => state.selectedIds);
   const clearSelection = useAppStore((state) => state.clearSelection);
-  const pokemons = useAppStore((state) => state.pokemons);
+
+  const queryClient = useQueryClient();
 
   const selectedCount = selectedIds.length;
 
   if (selectedCount === 0) return null;
 
   const handleDownload = () => {
-    const selectedPokemons = pokemons.filter((pokemon) => {
+    const allCachedQueries = queryClient.getQueriesData<CachedPokemonResponse>({
+      queryKey: ['pokemons'],
+    });
+
+    const allCachedPokemons: PokemonData[] = [];
+
+    allCachedQueries.forEach(([, queryData]) => {
+      if (queryData?.pokemons) {
+        allCachedPokemons.push(...queryData.pokemons);
+      }
+    });
+
+    const selectedPokemons = allCachedPokemons.filter((pokemon) => {
       return selectedIds.some(
         (selectedId) => String(selectedId).trim() === String(pokemon.id).trim()
       );
     });
-    downloadCsv(selectedPokemons);
+
+    const uniqueSelectedPokemons = Array.from(
+      new Map<number, PokemonData>(selectedPokemons.map((p) => [p.id, p])).values()
+    );
+
+    downloadCsv(uniqueSelectedPokemons);
   };
 
   return (

@@ -1,22 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { SearchBar } from '@/widgets/search-bar';
 import { PokemonList } from '@/widgets/pokemon-list';
-import { searchService } from '@/features/search-pokemon';
-import type { PokemonData } from '@/features/search-pokemon';
 import { Pagination } from '@/shared/ui/pagination';
-import { useAppStore } from '@/shared/model';
+import { usePokemonsQuery } from '@/entities/pokemon';
 
 const ITEMS_PER_PAGE = 20;
 
 export function MainPage() {
-  const [pokemons, setPokemons] = useState<PokemonData[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const setGlobalPokemons = useAppStore((state) => state.setPokemons);
-
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const params = useParams();
@@ -26,6 +17,25 @@ export function MainPage() {
   const currentSearchTerm = searchParams.get('q') || '';
 
   const savedTermInStorage = localStorage.getItem('pokemonSearchTerm') || '';
+
+  const { data, isLoading, isError, error } = usePokemonsQuery(
+    currentSearchTerm,
+    currentPage,
+    ITEMS_PER_PAGE
+  );
+
+  const isFullyOffline = !navigator.onLine;
+  let errorMsg: string | null = null;
+
+  if (isError || isFullyOffline) {
+    if (isFullyOffline) {
+      errorMsg = 'No internet connection. Cannot display or refresh data.';
+    } else {
+      errorMsg = error instanceof Error ? error.message : 'Unknown error';
+    }
+  }
+  const pokemons = isFullyOffline ? [] : data?.pokemons || [];
+  const totalCount = isFullyOffline ? 0 : data?.totalCount || 0;
 
   useEffect(() => {
     const urlQuery = searchParams.get('q');
@@ -44,43 +54,6 @@ export function MainPage() {
     }
   }, [searchParams, setSearchParams, savedTermInStorage]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadData = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const result = await searchService.execute(currentSearchTerm, currentPage, ITEMS_PER_PAGE);
-
-        if (isMounted) {
-          setPokemons(result.pokemons);
-          setTotalCount(result.totalCount);
-          setGlobalPokemons(result.pokemons);
-        }
-      } catch (err) {
-        if (isMounted) {
-          const msg = err instanceof Error ? err.message : 'Unknown error';
-          setError(msg);
-          setPokemons([]);
-          setTotalCount(0);
-          setGlobalPokemons([]);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [currentSearchTerm, currentPage, setGlobalPokemons]);
-
   const handleSearch = (term: string) => {
     setSearchParams({
       q: term,
@@ -92,17 +65,13 @@ export function MainPage() {
 
   const handlePageChange = (newPage: number) => {
     const currentQuery = searchParams.get('q');
-
-    const newParams: Record<string, string> = {
-      page: String(newPage),
-    };
+    const newParams: Record<string, string> = { page: String(newPage) };
 
     if (currentQuery) {
       newParams.q = currentQuery;
     }
 
     setSearchParams(newParams);
-
     navigate({
       pathname: '.',
       search: new URLSearchParams(newParams).toString(),
@@ -130,7 +99,7 @@ export function MainPage() {
           className={`transition-all duration-300 w-full ${isDetailOpen ? 'lg:w-1/2' : 'lg:w-full'}`}
         >
           <div className="bg-search-bg w-full rounded-md p-3 min-h-75">
-            <PokemonList pokemons={pokemons} isLoading={isLoading} error={error} />
+            <PokemonList pokemons={pokemons} isLoading={isLoading} error={errorMsg} />
 
             {!isLoading && !error && pokemons.length > 0 && (
               <Pagination
