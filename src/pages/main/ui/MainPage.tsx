@@ -3,6 +3,7 @@ import { useSearchParams, Outlet, useNavigate, useParams } from 'react-router-do
 import { SearchBar } from '@/widgets/search-bar';
 import { PokemonList } from '@/widgets/pokemon-list';
 import { Pagination } from '@/shared/ui/pagination';
+import { Spinner } from '@/shared/ui'; 
 import { usePokemonsQuery } from '@/entities/pokemon';
 
 const ITEMS_PER_PAGE = 20;
@@ -24,18 +25,12 @@ export function MainPage() {
     ITEMS_PER_PAGE
   );
 
-  const isFullyOffline = !navigator.onLine;
-  let errorMsg: string | null = null;
+  const errorMsg = isError 
+    ? (error instanceof Error ? error.message : 'Unknown error') 
+    : null;
 
-  if (isError || isFullyOffline) {
-    if (isFullyOffline) {
-      errorMsg = 'No internet connection. Cannot display or refresh data.';
-    } else {
-      errorMsg = error instanceof Error ? error.message : 'Unknown error';
-    }
-  }
-  const pokemons = isFullyOffline ? [] : data?.pokemons || [];
-  const totalCount = isFullyOffline ? 0 : data?.totalCount || 0;
+  const pokemons = data?.pokemons || []; 
+  const totalCount = data?.totalCount || 0;
 
   useEffect(() => {
     const urlQuery = searchParams.get('q');
@@ -98,15 +93,33 @@ export function MainPage() {
         <div
           className={`transition-all duration-300 w-full ${isDetailOpen ? 'lg:w-1/2' : 'lg:w-full'}`}
         >
-          <div className="bg-search-bg w-full rounded-md p-3 min-h-75">
-            <PokemonList pokemons={pokemons} isLoading={isLoading} error={errorMsg} />
-
-            {!isLoading && !error && pokemons.length > 0 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+          <div className="bg-search-bg w-full rounded-md p-3 min-h-75 flex flex-col justify-between">
+            {isLoading && (
+              <div className="flex justify-center items-center grow min-h-75">
+                <Spinner />
+              </div>
+            )}
+            {errorMsg && (
+              <div className="text-red-500 text-center mt-10 p-6 border border-red-500/20 bg-red-500/5 rounded-xl">
+                <p className="font-bold text-lg mb-1">Loading error</p>
+                <p>{errorMsg}</p>
+              </div>
+            )}
+            {!isLoading && !errorMsg && pokemons.length === 0 && (
+              <div className="text-center py-10 text-sub-text grow">
+                No pokemons found.
+              </div>
+            )}
+            {!isLoading && !errorMsg && pokemons.length > 0 && (
+              <>
+                <PokemonList pokemons={pokemons} />
+                
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </>
             )}
           </div>
         </div>
@@ -126,8 +139,6 @@ export function MainPage() {
           </div>
         )}
       </div>
-
-      <div className="mt-4 self-center"></div>
     </main>
   );
 }

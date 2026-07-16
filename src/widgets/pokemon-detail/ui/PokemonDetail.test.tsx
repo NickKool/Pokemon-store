@@ -2,20 +2,48 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PokemonDetail } from './PokemonDetail';
 import { usePokemonDetailsQuery } from '@/entities/pokemon';
+import { useParams } from 'react-router-dom';
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { PokemonData } from '@/features/search-pokemon';
 
 vi.mock('react-router-dom', () => ({
-  useParams: () => ({ id: 'pikachu' }),
+  useParams: vi.fn(),
 }));
 
 vi.mock('@/entities/pokemon', () => ({
   usePokemonDetailsQuery: vi.fn(),
 }));
 
+vi.mock('@/shared/ui', () => ({
+  Spinner: () => <div data-testid="spinner">Loading...</div>,
+}));
+
 describe('PokemonDetail Component with TanStack Query', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Стандартный рабочий ID для большинства тестов
+    vi.mocked(useParams).mockReturnValue({ id: 'pikachu' });
+  });
+
+  it('should display fallback text if id is not provided', () => {
+    vi.mocked(useParams).mockReturnValue({ id: undefined });
+
+    // ИСПРАВЛЕНО: Строгая типизация через Partial без any
+    const mockEmptyResult: Partial<UseQueryResult<PokemonData, Error>> = {
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    };
+
+    vi.mocked(usePokemonDetailsQuery).mockReturnValue(
+      mockEmptyResult as UseQueryResult<PokemonData, Error>
+    );
+
+    render(<PokemonDetail />);
+
+    expect(screen.getByText('No pokemon selected')).toBeInTheDocument();
   });
 
   it('should display a spinner while loading data', async () => {
@@ -31,11 +59,10 @@ describe('PokemonDetail Component with TanStack Query', () => {
       mockLoadingResult as UseQueryResult<PokemonData, Error>
     );
 
-    const { container } = render(<PokemonDetail />);
+    render(<PokemonDetail />);
 
     await waitFor(() => {
-      const spinnerContainer = container.querySelector('.flex.justify-center.items-center.h-48');
-      expect(spinnerContainer).toBeInTheDocument();
+      expect(screen.getByTestId('spinner')).toBeInTheDocument();
     });
   });
 

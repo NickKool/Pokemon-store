@@ -1,28 +1,20 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePokemonDetailsQuery } from '@/entities/pokemon';
 import { Spinner } from '@/shared/ui';
 
 export function PokemonDetail() {
   const { id } = useParams<{ id: string }>();
-  const [isReady, setIsReady] = useState(false);
 
   const {
     data: pokemon,
     isLoading,
     isError,
     error,
-  } = usePokemonDetailsQuery(isReady ? id : undefined);
+  } = usePokemonDetailsQuery(id);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!isReady) return null;
+  if (!id) {
+    return <div className="text-sub-text p-4 text-center">No pokemon selected</div>;
+  }
 
   if (isLoading) {
     return (

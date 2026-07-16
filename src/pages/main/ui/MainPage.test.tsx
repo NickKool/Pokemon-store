@@ -2,10 +2,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { MainPage } from './MainPage';
 import { searchService } from '@/features/search-pokemon';
-import { type PokemonListProps } from '@/widgets/pokemon-list/ui/PokemonList';
-import { type PokemonData } from '@/features/search-pokemon';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/shared/api/queryClient';
+import { type PokemonData } from '@/features/search-pokemon'; 
 
 vi.mock('@/features/search-pokemon', () => ({
   searchService: {
@@ -21,11 +20,9 @@ vi.mock('@/widgets/search-bar', () => ({
 }));
 
 vi.mock('@/widgets/pokemon-list', () => ({
-  PokemonList: ({ pokemons, isLoading, error }: PokemonListProps) => (
+  PokemonList: ({ pokemons }: { pokemons: PokemonData[] }) => (
     <div data-testid="list">
-      {isLoading && <span>Spinner</span>}
-      {error && <span>{error}</span>}
-      {pokemons?.map((p: PokemonData) => (
+      {pokemons?.map((p) => (
         <div key={p.id}>{p.name}</div>
       ))}
     </div>
@@ -46,8 +43,12 @@ vi.mock('@/shared/ui/pagination', () => ({
   ),
 }));
 
+vi.mock('@/shared/ui', () => ({
+  Spinner: () => <div data-testid="spinner">Loading...</div>,
+}));
+
 describe('MainPage Component integration tests', () => {
-  const mockPokemons = [
+  const mockPokemons: PokemonData[] = [
     { id: 1, name: 'Bulbasaur', description: 'Seed pokemon', image: 'url1' },
     { id: 2, name: 'Pikachu', description: 'Seed pokemon', image: 'url2' },
   ];
@@ -55,19 +56,15 @@ describe('MainPage Component integration tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-
     queryClient.clear();
 
     queryClient.setDefaultOptions({
       queries: {
         retry: false,
-        networkMode: 'always',
         gcTime: 0,
         staleTime: 0,
       },
     });
-
-    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
   });
 
   const renderWithRouter = (initialEntries = ['/']) => {
@@ -112,9 +109,7 @@ describe('MainPage Component integration tests', () => {
   });
 
   it('should display "Unknown error" if a non-standard exception is thrown', async () => {
-    vi.mocked(searchService.execute).mockImplementation(() => {
-      throw { customMessage: 'Raw string or object exception' };
-    });
+    vi.mocked(searchService.execute).mockRejectedValue({ customMessage: 'Raw string or object exception' });
 
     renderWithRouter();
 
@@ -138,23 +133,6 @@ describe('MainPage Component integration tests', () => {
     await waitFor(() => {
       expect(searchService.execute).toHaveBeenCalledWith('pikachu', 1, 20);
       expect(screen.getByText('Pikachu')).toBeInTheDocument();
-    });
-  });
-
-  it('should display offline message and hide list when browser is offline', async () => {
-    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
-    vi.mocked(searchService.execute).mockResolvedValue({
-      pokemons: mockPokemons,
-      totalCount: 2,
-    });
-
-    renderWithRouter();
-
-    await waitFor(() => {
-      expect(screen.queryByText('Bulbasaur')).not.toBeInTheDocument();
-      expect(
-        screen.getByText('No internet connection. Cannot display or refresh data.')
-      ).toBeInTheDocument();
     });
   });
 });
