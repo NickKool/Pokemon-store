@@ -34,6 +34,6 @@ export const appRouter = createBrowserRouter(
     },
   ],
   {
-    basename: '/React-2026-Q2/',
+    basename: '/',
   }
 );

@@ -4,11 +4,11 @@ An interactive frontend application built using **Feature-Sliced Design (FSD)** 
 
 ## Live Demo
 
-[View Live Project on Netlify](https://netlify.app)
+[View Live Project on Netlify](https://pokemon-store-project.netlify.app/)
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Tech Stack & Architecture
 
 - **Architecture:** Feature-Sliced Design (FSD) for scalable and maintainable codebase structure.
 - **Core & Routing:** React 19, React Router DOM v7
