@@ -14,7 +14,7 @@ export function Layout() {
           <div className="flex-shrink-0 ">
             <NavLink to="/" className="hover:opacity-80 transition-opacity duration-200">
               <img
-                src="/React-2026-Q2/logo.png"
+                src="/logo.png"
                 alt="Logo"
                 className="w-32 h-auto object-contain"
               />

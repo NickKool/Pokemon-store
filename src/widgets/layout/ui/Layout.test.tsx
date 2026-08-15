@@ -45,7 +45,7 @@ describe('Layout Component with TanStack Query', () => {
 
     const logoImg = screen.getByRole('img', { name: /logo/i });
     expect(logoImg).toBeInTheDocument();
-    expect(logoImg).toHaveAttribute('src', '/React-2026-Q2/logo.png');
+    expect(logoImg).toHaveAttribute('src', '/logo.png');
 
     expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /about us/i })).toBeInTheDocument();
